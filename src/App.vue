@@ -30,7 +30,7 @@ export default {
   methods: {
     calculatePoints(x1, y1, x2, y2) {
       const angle = Math.atan((x2 - x1) / (y2 - y1));
-      const offset = 10;
+      const offset = 2.5;
       const offsetX = offset * Math.cos(angle);
       const offsetY = offset * Math.sin(angle);
       const points = [
@@ -45,6 +45,14 @@ export default {
       let graphic = event.currentTarget;
       if (graphic && graphic.geometry.graphicsData[0]) {
         graphic.geometry.graphicsData[0].lineStyle.color = newColor;
+        graphic.geometry.invalidate();
+      }
+    },
+    changeLineStyleWidth(event, newWidth, native) {
+      let graphic = event.currentTarget;
+      if (graphic && graphic.geometry.graphicsData[0]) {
+        graphic.geometry.graphicsData[0].lineStyle.width = newWidth;
+        graphic.geometry.graphicsData[0].lineStyle.native = native;
         graphic.geometry.invalidate();
       }
     },
@@ -127,8 +135,14 @@ export default {
         .moveTo(x1, y1)
         .lineTo(x2, y2)
         .on('click', onClick)
-        .on('mouseover', event => {this.changeLineStyleColor(event, 0xff7f50)})
-        .on('mouseout', event => {this.changeLineStyleColor(event, 0xff0000)});
+        .on('mouseover', event => {
+          this.changeLineStyleColor(event, 0xff7f50);
+          this.changeLineStyleWidth(event, 5, false);
+        })
+        .on('mouseout', event => {
+          this.changeLineStyleColor(event, 0xff0000);
+          this.changeLineStyleWidth(event, 1, true);
+        });
       return gr;
     },
     drawLines() {

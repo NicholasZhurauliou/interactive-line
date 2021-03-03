@@ -30,7 +30,7 @@ export default {
   methods: {
     calculatePoints(x1, y1, x2, y2) {
       const angle = Math.atan((x2 - x1) / (y2 - y1));
-      const offset = 1.4142135623730951;
+      const offset = 10;
       const offsetX = offset * Math.cos(angle);
       const offsetY = offset * Math.sin(angle);
       const points = [

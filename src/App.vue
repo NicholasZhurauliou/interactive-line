@@ -1,6 +1,7 @@
 <template>
   <div id="app">
     <canvas ref="canvas" @contextmenu.prevent></canvas>
+    <button @click="validation">Проверить на самопересечение</button>
   </div>
 </template>
 
@@ -62,6 +63,29 @@ export default {
         graphic.geometry.graphicsData[0].fillStyle.color = newColor;
         graphic.geometry.invalidate();
       } 
+    },
+    checkSelfLineIntersection() {
+      const numberSegments = points.length - 1;
+      for (let i = 1; i <= numberSegments; i++) {
+        for (let j = i + 2; j <= numberSegments; j++) {
+          let segment1 = [...points[i - 1], ...points[i]];
+          let segment2 = [...points[j - 1], ...points[j]];
+          let isIntersection = this.isSegmentsIntersect(segment1, segment2);
+          if (isIntersection) return true;
+        }
+      }
+
+      return false;
+    },
+    isSegmentsIntersect(segment1, segment2) {
+      const multiplyVectors = (v1, v2, w1, w2) => v1 * w2 - v2 * w1;
+      const [x1, y1, x2, y2] = segment1;
+      const [x3, y3, x4, y4] = segment2;
+      const v1 = multiplyVectors(x2 - x1, y2 - y1, x3 - x1, y3 - y1);
+      const v2 = multiplyVectors(x2 - x1, y2 - y1, x4 - x1, y4 - y1);
+      const v3 = multiplyVectors(x4 - x3, y4 - y3, x1 - x3, y1 - y3);
+      const v4 = multiplyVectors(x4 - x3, y4 - y3, x2 - x3, y2 - y3);
+      return (v1 * v2 < 0) && (v3 * v4 < 0);
     },
     drawDisk(x, y, index) {
       const that = this;
@@ -182,6 +206,16 @@ export default {
     redrawLinesAndDisk() {
       this.redrawLines();
       this.redrawDisk();
+    },
+    validation() {
+      let message;
+      const isValid = !this.checkSelfLineIntersection();
+      if (isValid) {
+        message = 'Линия не имеет самопересечений!'
+      } else {
+        message = 'Линия имеет самопересечения!'
+      }
+      alert(message);
     }
   }
 }
@@ -192,7 +226,16 @@ export default {
   margin: 0;
   padding: 0;
 }
+#app {
+  position: relative;
+}
 #app canvas {
   display: block;
+}
+#app button {
+  padding: 0 8px;
+  position: absolute;
+  bottom: 24px;
+  left: 24px;
 }
 </style>

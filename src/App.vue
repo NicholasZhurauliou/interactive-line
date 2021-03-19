@@ -27,6 +27,7 @@ export default {
     containerDisks = null;
     container = null;
     app = null;
+    console.warn('beforeDestroy');
   },
   methods: {
     calculatePoints(x1, y1, x2, y2) {
